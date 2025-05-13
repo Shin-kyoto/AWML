@@ -1,7 +1,7 @@
 version: 1
 dataset_version: db-j6gen2-v1.0
 
-train:
+train(odaiba, 204 scenes):
   - 082f15be-691c-43f4-b34e-6c341dc0f7d4
   - af6a7016-edc6-4378-aad5-45d31fc63b07
   - 16bb1293-2b29-4033-aa63-f58720656ac9
@@ -202,6 +202,12 @@ train:
   - fd6d7373-69a7-4eed-b965-c91cd5a7c2c0
   - 32b9ec1a-c37c-402c-bcb7-7ecc8a344d89
   - 6d633796-b0a7-476e-a73b-8091a3ea2455
+  - 0b637935-55c7-454c-9794-81af92a46b30
+  - 9ada9243-4abe-465a-a5ee-3e4d1a9acd01
+  - 3458ee65-ec80-4b78-bc6d-529cdad13cef
+  - a4e13cac-ce30-4f86-98d5-defbbab919e0
+
+train(shiojiri-0226, 40 scenes):
   - 08065f8e-7813-41d9-8e4d-f38a092ea30d
   - 850ad4f9-cf65-4473-8803-3398c848d882
   - 8cc3a77b-4d3d-4dc8-9c18-9422c596c688
@@ -242,6 +248,8 @@ train:
   - 36d3a104-24d0-4a16-b7fb-275682f07e12
   - cfe90d3f-08da-41df-a7df-e455c6b2d5b2
   - 9951a73a-aabe-4ed8-83f7-ce4cb44ccc74
+
+train(shiojiri-0227 before 15:20, 52 scenes):
   - 331dcf1d-5c17-4cbf-a6d7-87348ab86576
   - 97765ddf-e730-4c2c-8ffb-0b0104d1dc1a
   - 21857d38-a19c-43fd-a820-a3123e7fc02a
@@ -294,6 +302,8 @@ train:
   - dc03047d-e7b8-490b-bf6d-760db5de3beb
   - e9bac35c-bb42-4e1b-b4a3-a0c19e34f743
   - b20797c9-4abd-4f24-8de4-fa0d83350b7a
+
+train(shiojiri-0227 after 15:20, 54 scenes):
   - 871169fb-5aef-433a-9ab1-4bb4e26d8783
   - 030af2f4-9678-46be-bf6a-c63a4df40354
   - 4fefd69a-325e-4d6e-8a36-212b8eba959b
@@ -348,6 +358,8 @@ train:
   - ae11788b-b897-4373-b42a-8fc966f52679
   - 245481ee-8612-4146-863e-b35d9e9ee75b
   - e63d1e50-38af-4753-b83f-cc78466c5891
+
+train(shiojiri-0228, 92 scenes):
   - e24ef1c9-b71b-401d-ad93-6b4bf8acd841
   - e04e8a5a-124b-4bfb-bb16-d7ce5104a9f8
   - 88c914b3-c7e1-4482-af39-6dafa664ccc4
@@ -440,10 +452,6 @@ train:
   - 62accf7b-bd29-4308-8aef-37fd66d97cc3
   - a5e4ee0f-f31c-4d41-ab7b-09571af21f50
   - 10bc8d57-de52-47f4-99bf-e52e3eee9fd6
-  - 0b637935-55c7-454c-9794-81af92a46b30
-  - 9ada9243-4abe-465a-a5ee-3e4d1a9acd01
-  - 3458ee65-ec80-4b78-bc6d-529cdad13cef
-  - a4e13cac-ce30-4f86-98d5-defbbab919e0
 
 val:
   - 6e398185-4796-44fd-8530-d7d37b046c8e
