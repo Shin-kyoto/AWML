@@ -5,7 +5,6 @@ from pathlib import Path
 from typing import Any, Dict, List
 
 from mmengine.config import Config
-from mmengine.registry import TASK_UTILS, init_default_scope
 
 from tools.auto_labeling_3d.utils.logger import setup_logger
 
@@ -26,8 +25,21 @@ def apply_filter(
     Returns:
        Dict[str, Any]: Filtered info dict
     """
+    # Import the filter class directly to avoid registry issues
+    from tools.auto_labeling_3d.filter_objects.filter import ThresholdFilter
+    
     filter_cfg["logger"] = logger
-    filter_model = TASK_UTILS.build(filter_cfg)
+    
+    # Build the filter manually instead of using TASK_UTILS.build
+    if filter_cfg["type"] == "ThresholdFilter":
+        filter_model = ThresholdFilter(
+            confidence_thresholds=filter_cfg["confidence_thresholds"],
+            use_label=filter_cfg["use_label"],
+            logger=filter_cfg["logger"]
+        )
+    else:
+        raise ValueError(f"Unsupported filter type: {filter_cfg['type']}")
+    
     return filter_model.filter(predicted_result_info, predicted_result_info_name)
 
 
@@ -73,8 +85,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def main():
-    # setup
-    init_default_scope("mmdet3d")
+    # setup - remove the problematic init_default_scope call
     args = parse_args()
     logger: logging.Logger = setup_logger(args, name="filter_objects")
 
