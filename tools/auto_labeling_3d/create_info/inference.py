@@ -40,7 +40,7 @@ def _predict_one_frame(model: Any, data: Dict[str, Any]) -> Tuple[NDArray, NDArr
         outputs: List = model.test_step(data)
 
     # get bboxes, scores, labels
-    if "pred_instances_3d" not in outputs[0]:
+    if hasattr(outputs[0], "pred_instances_3d"):
         bboxes: NDArray = outputs[0].pred_instances_3d["bboxes_3d"].tensor.detach().cpu()
         scores: NDArray = outputs[0].pred_instances_3d["scores_3d"].detach().cpu().numpy()
         labels: NDArray = outputs[0].pred_instances_3d["labels_3d"].detach().cpu().numpy()
