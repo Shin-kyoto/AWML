@@ -5,6 +5,7 @@ from pathlib import Path
 
 from mmengine.registry import init_default_scope
 
+from tools.auto_labeling_3d.attach_tracking_id.attach_tracking_id import attach_tracking_id
 from tools.auto_labeling_3d.create_info.create_info_data import create_info_data
 from tools.auto_labeling_3d.entrypoint.parse_config import (
     PipelineConfig,
@@ -71,15 +72,23 @@ def trigger_auto_labeling_pipeline(config: PipelineConfig) -> None:
         name, output_info = ensemble_infos(ensemble_cfg.filter_pipelines, logger)
         
         # Save ensembled results
-        output_path = config.logging.work_dir / f"pseudo_infos_{name}_filtered.pkl"
-        logger.info(f"Saving filtered and ensembled results to {output_path}")
-        with open(output_path, "wb") as f:
+        ensemble_output_path = config.logging.work_dir / f"pseudo_infos_{name}_filtered.pkl"
+        logger.info(f"Saving filtered and ensembled results to {ensemble_output_path}")
+        with open(ensemble_output_path, "wb") as f:
             pickle.dump(output_info, f)
-        logger.info(f"Ensemble step completed. Results saved to {output_path}")
+        logger.info(f"Ensemble step completed. Results saved to {ensemble_output_path}")
     else:
         raise ValueError(
             f"You cannot use {ensemble_cfg.filter_pipelines.type} type. Please use Ensemble type instead."
         )
+
+    # Step 4: Attach tracking IDs
+    logger.info("Starting tracking step...")
+    tracking_input_path = Path(config.tracking.input_path)
+    tracking_output_path = Path(config.tracking.output_path)
+    
+    attach_tracking_id(tracking_input_path, tracking_output_path, logger)
+    logger.info(f"Tracking step completed. Results saved to {tracking_output_path}")
 
 
 def parse_args() -> argparse.Namespace:
