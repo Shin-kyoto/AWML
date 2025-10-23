@@ -7,11 +7,13 @@ from mmengine.registry import init_default_scope
 
 from tools.auto_labeling_3d.attach_tracking_id.attach_tracking_id import attach_tracking_id
 from tools.auto_labeling_3d.create_info.create_info_data import create_info_data
+from tools.auto_labeling_3d.create_pseudo_t4dataset.create_pseudo_t4dataset import create_pseudo_t4dataset
 from tools.auto_labeling_3d.entrypoint.parse_config import (
     PipelineConfig,
     load_ensemble_config,
     load_model_config,
     load_pipeline_config,
+    load_t4dataset_config,
 )
 from tools.auto_labeling_3d.filter_objects.ensemble_infos import ensemble_infos
 from tools.auto_labeling_3d.script.download_checkpoints import download_file
@@ -89,6 +91,19 @@ def trigger_auto_labeling_pipeline(config: PipelineConfig) -> None:
     
     attach_tracking_id(tracking_input_path, tracking_output_path, logger)
     logger.info(f"Tracking step completed. Results saved to {tracking_output_path}")
+
+    # Step 5: Create pseudo T4dataset
+    logger.info("Starting create pseudo T4dataset step...")
+    t4dataset_config = load_t4dataset_config(config.pseudo_dataset.config)
+    
+    create_pseudo_t4dataset(
+        pseudo_labeled_info_path=tracking_output_path,
+        non_annotated_dataset_path=config.pseudo_dataset.root_path,
+        t4dataset_config=t4dataset_config,
+        overwrite=config.pseudo_dataset.overwrite,
+        logger=logger,
+    )
+    logger.info("Create pseudo T4dataset step completed.")
 
 
 def parse_args() -> argparse.Namespace:

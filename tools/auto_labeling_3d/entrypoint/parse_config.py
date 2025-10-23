@@ -178,6 +178,21 @@ def load_ensemble_config(ensemble_config_path: Path) -> Config:
     return Config.fromfile(str(ensemble_config_path))
 
 
+def load_t4dataset_config(t4dataset_config_path: Path) -> Dict[str, Any]:
+    """
+    Load T4dataset configuration.
+
+    Args:
+        t4dataset_config_path (Path): Path to the T4dataset configuration file.
+
+    Returns:
+        Dict[str, Any]: Loaded T4dataset configuration.
+    """
+    with open(t4dataset_config_path, "r") as file:
+        t4dataset_config: Dict[str, Any] = yaml.safe_load(file)
+    return t4dataset_config
+
+
 def load_pipeline_config(config_path: Path) -> PipelineConfig:
     """
     Load and parse pipeline configuration from YAML file.
