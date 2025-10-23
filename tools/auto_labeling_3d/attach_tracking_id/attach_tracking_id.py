@@ -100,6 +100,34 @@ def track_objects(
     return dataset_info
 
 
+def attach_tracking_id(input_path: Path, output_path: Path, logger: logging.Logger) -> None:
+    """
+    Attach tracking IDs to objects in the dataset.
+
+    Args:
+        input_path (Path): Path to input pseudo labeled pkl file.
+        output_path (Path): Path to output tracked pkl file.
+        logger (logging.Logger): Logger instance for output messages.
+    """
+    if not input_path.exists():
+        raise FileNotFoundError(f"Input file not found: {input_path}")
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    # load info
+    with open(input_path, "rb") as f:
+        dataset_info = pickle.load(f)
+
+    scene_boundaries = determine_scene_range(dataset_info)
+    for scene_boundary in scene_boundaries:
+        dataset_info = track_objects(dataset_info, scene_boundary, logger)
+
+    # save tracked info
+    with open(output_path, "wb") as f:
+        pickle.dump(dataset_info, f)
+    logger.info(f"Tracked dataset saved to {output_path}")
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Track objects using Kalman filter and Hungarian algorithm with BEV IoU"
@@ -121,26 +149,11 @@ def main():
     args = parse_args()
 
     input_path = Path(args.input)
-    if not input_path.exists():
-        raise FileNotFoundError(f"Input file not found: {args.input}")
-
     output_path = Path(args.output)
-    output_path.parent.mkdir(parents=True, exist_ok=True)
 
     logger: logging.Logger = setup_logger(args, name="attach_tracking_id")
 
-    # load info
-    with open(input_path, "rb") as f:
-        dataset_info = pickle.load(f)
-
-    scene_boundaries = determine_scene_range(dataset_info)
-    for scene_boundary in scene_boundaries:
-        dataset_info = track_objects(dataset_info, scene_boundary, logger)
-
-    # save tracked info
-    with open(output_path, "wb") as f:
-        pickle.dump(dataset_info, f)
-    logger.info(f"Tracked dataset saved to {output_path}")
+    attach_tracking_id(input_path, output_path, logger)
 
 
 if __name__ == "__main__":
