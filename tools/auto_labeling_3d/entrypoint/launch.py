@@ -1,11 +1,18 @@
 import argparse
 import logging
+import pickle
 from pathlib import Path
 
 from mmengine.registry import init_default_scope
 
 from tools.auto_labeling_3d.create_info.create_info_data import create_info_data
-from tools.auto_labeling_3d.entrypoint.parse_config import PipelineConfig, load_model_config, load_pipeline_config
+from tools.auto_labeling_3d.entrypoint.parse_config import (
+    PipelineConfig,
+    load_ensemble_config,
+    load_model_config,
+    load_pipeline_config,
+)
+from tools.auto_labeling_3d.filter_objects.ensemble_infos import ensemble_infos
 from tools.auto_labeling_3d.script.download_checkpoints import download_file
 
 
@@ -55,6 +62,24 @@ def trigger_auto_labeling_pipeline(config: PipelineConfig) -> None:
         logger.info(f"Completed processing for model: {model.name}")
     
     logger.info("create_info_data step completed.")
+
+    # Step 3: Ensemble infos
+    logger.info("Starting ensemble step...")
+    ensemble_cfg = load_ensemble_config(config.ensemble.config)
+    
+    if ensemble_cfg.filter_pipelines.type == "Ensemble":
+        name, output_info = ensemble_infos(ensemble_cfg.filter_pipelines, logger)
+        
+        # Save ensembled results
+        output_path = config.logging.work_dir / f"pseudo_infos_{name}_filtered.pkl"
+        logger.info(f"Saving filtered and ensembled results to {output_path}")
+        with open(output_path, "wb") as f:
+            pickle.dump(output_info, f)
+        logger.info(f"Ensemble step completed. Results saved to {output_path}")
+    else:
+        raise ValueError(
+            f"You cannot use {ensemble_cfg.filter_pipelines.type} type. Please use Ensemble type instead."
+        )
 
 
 def parse_args() -> argparse.Namespace:

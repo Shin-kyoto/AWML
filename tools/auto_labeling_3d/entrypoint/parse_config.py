@@ -165,6 +165,19 @@ def load_model_config(model: ModelConfig, work_dir: Path) -> Config:
     return model_config
 
 
+def load_ensemble_config(ensemble_config_path: Path) -> Config:
+    """
+    Load ensemble configuration.
+
+    Args:
+        ensemble_config_path (Path): Path to the ensemble configuration file.
+
+    Returns:
+        Config: Loaded ensemble configuration.
+    """
+    return Config.fromfile(str(ensemble_config_path))
+
+
 def load_pipeline_config(config_path: Path) -> PipelineConfig:
     """
     Load and parse pipeline configuration from YAML file.
