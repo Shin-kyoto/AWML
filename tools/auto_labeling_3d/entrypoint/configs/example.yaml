@@ -29,8 +29,8 @@ ensemble:
   config: /workspace/tools/auto_labeling_3d/filter_objects/config/ensemble_base.py
 
 tracking:
-  input_path: /workspace/work_dirs/auto_labeling_3d/filter_objects/pseudo_infos_centerpoint+bevfusion+streampetr_filtered.pkl
-  output_path: /workspace/work_dirs/auto_labeling_3d/filter_objects/pseudo_infos_centerpoint+bevfusion+streampetr_filtered_tracked.pkl
+  input_path: /workspace/work_dirs/auto_labeling_3d/pipeline_example/pseudo_infos_centerpoint+bevfusion+streampetr_filtered.pkl
+  output_path: /workspace/work_dirs/auto_labeling_3d/pipeline_example/pseudo_infos_centerpoint+bevfusion+streampetr_filtered_tracked.pkl
 
 pseudo_dataset:
   config: /workspace/tools/auto_labeling_3d/create_pseudo_t4dataset/config/x2.yaml
