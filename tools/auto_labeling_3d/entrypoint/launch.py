@@ -2,7 +2,10 @@ import argparse
 import logging
 from pathlib import Path
 
-from tools.auto_labeling_3d.entrypoint.parse_config import PipelineConfig, load_pipeline_config
+from mmengine.registry import init_default_scope
+
+from tools.auto_labeling_3d.create_info.create_info_data import create_info_data
+from tools.auto_labeling_3d.entrypoint.parse_config import PipelineConfig, load_model_config, load_pipeline_config
 from tools.auto_labeling_3d.script.download_checkpoints import download_file
 
 
@@ -32,6 +35,27 @@ def trigger_auto_labeling_pipeline(config: PipelineConfig) -> None:
     # Step 1: Download checkpoints
     download_checkpoints(config, logger)
 
+    # Step 2: Create info data for each model
+    logger.info("Starting create_info_data step...")
+    for model in config.create_info.model_list:
+        logger.info(f"Processing model: {model.name}")
+        
+        # Load model config
+        model_config = load_model_config(model, config.logging.work_dir)
+        
+        # Execute create_info_data
+        create_info_data(
+            non_annotated_dataset_path=config.create_info.root_path,
+            model_config=model_config,
+            model_checkpoint_path=str(model.checkpoint.checkpoint_path),
+            model_name=model.name,
+            out_dir=str(config.create_info.output_dir),
+            logger=logger,
+        )
+        logger.info(f"Completed processing for model: {model.name}")
+    
+    logger.info("create_info_data step completed.")
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -52,6 +76,9 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
+    # Initialize mmdet3d scope
+    init_default_scope("mmdet3d")
+    
     args = parse_args()
     config_path = Path(args.config).expanduser()
     pipeline_config = load_pipeline_config(config_path)

@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import yaml
+from mmengine.config import Config
 
 
 @dataclass
@@ -140,6 +141,28 @@ def _parse_pseudo_dataset(pseudo_dataset_dict: Dict[str, Any], base_dir: Path) -
         input_source=input_source,
         overwrite=overwrite,
     )
+
+
+def load_model_config(model: ModelConfig, work_dir: Path) -> Config:
+    """
+    Load model configuration and set work_dir.
+
+    Args:
+        model (ModelConfig): Model configuration containing model_config path.
+        work_dir (Path): Base work directory for the pipeline.
+
+    Returns:
+        Config: Loaded model configuration with work_dir set.
+    """
+    model_config = Config.fromfile(str(model.model_config))
+    
+    # Set work_dir if not specified
+    if model_config.get("work_dir", None) is None:
+        model_work_dir = work_dir / "create_info_data" / model.name
+        model_work_dir.mkdir(parents=True, exist_ok=True)
+        model_config.work_dir = str(model_work_dir)
+    
+    return model_config
 
 
 def load_pipeline_config(config_path: Path) -> PipelineConfig:
