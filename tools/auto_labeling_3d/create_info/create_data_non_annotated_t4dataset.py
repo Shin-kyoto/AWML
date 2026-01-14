@@ -4,7 +4,11 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import mmengine
 import numpy as np
-from mmdet3d.datasets.utils import convert_quaternion_to_matrix
+
+try:
+    from mmdet3d.datasets.utils import convert_quaternion_to_matrix
+except:
+    from mmdet3d.datasets.utils import convert_quaternion_to_matrix
 from mmengine import dump as mmengine_dump
 from mmengine.config import Config
 from mmengine.logging import print_log

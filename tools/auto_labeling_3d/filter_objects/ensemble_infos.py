@@ -5,7 +5,6 @@ from pathlib import Path
 from typing import Any, Dict, List
 
 from mmengine.config import Config
-from mmengine.registry import TASK_UTILS, init_default_scope
 
 from tools.auto_labeling_3d.filter_objects.filter_objects import filter_result
 from tools.auto_labeling_3d.utils.logger import setup_logger
@@ -33,8 +32,20 @@ def apply_ensemble(
     for group in ensemble_cfg["ensemble_setting"]["ensemble_label_groups"]:
         logger.info(f"  - {group}")
 
+    # Import the ensemble class directly to avoid registry issues
+    from tools.auto_labeling_3d.filter_objects.ensemble import NMSEnsembleModel
+    
     ensemble_cfg["logger"] = logger
-    ensemble_model = TASK_UTILS.build(ensemble_cfg)
+    
+    # Build the ensemble model manually instead of using TASK_UTILS.build
+    if ensemble_cfg["type"] == "NMSEnsembleModel":
+        ensemble_model = NMSEnsembleModel(
+            ensemble_setting=ensemble_cfg["ensemble_setting"],
+            logger=ensemble_cfg["logger"]
+        )
+    else:
+        raise ValueError(f"Unsupported ensemble type: {ensemble_cfg['type']}")
+        
     return ensemble_model.ensemble(predicted_result_infos)
 
 
@@ -80,8 +91,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def main():
-    # setup
-    init_default_scope("mmdet3d")
+    # setup - remove the problematic init_default_scope call
     args = parse_args()
     logger: logging.Logger = setup_logger(args, name="filter_objects")
 
